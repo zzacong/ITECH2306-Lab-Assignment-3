@@ -8,3 +8,6 @@ V1.1
 - Created CalculatePropertyTypeRatesWindow class
 - Create main method to test the GUI window
 - Display interface
+
+V1.2
+- Added 'Submit' JButton
