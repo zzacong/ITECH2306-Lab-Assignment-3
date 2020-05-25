@@ -12,16 +12,20 @@ import java.awt.*;
  */
 public class CalculatePropertyTypeRatesWindow extends JFrame {
 
-	private static final FlowLayout FLOW_LAYOUT = new FlowLayout(FlowLayout.CENTER);
+	private static final FlowLayout FLOW_LAYOUT_CENTER = new FlowLayout(FlowLayout.CENTER);
+	private static final FlowLayout FLOW_LAYOUT_RIGHT = new FlowLayout(FlowLayout.RIGHT);
+
 //	private static final BorderLayout BORDER_LAYOUT = new BorderLayout();
 	private JPanel borderLayout;
-	private JPanel titlePanel = new JPanel(FLOW_LAYOUT);
-	private JPanel propertyPanel = new JPanel(FLOW_LAYOUT);
-	private JPanel valuePanel = new JPanel(FLOW_LAYOUT);
-	private JPanel charityPanel = new JPanel(FLOW_LAYOUT);
+	private JPanel titlePanel = new JPanel(FLOW_LAYOUT_CENTER);
+	private JPanel propertyPanel = new JPanel(FLOW_LAYOUT_CENTER);
+	private JPanel valuePanel = new JPanel(FLOW_LAYOUT_CENTER);
+	private JPanel charityPanel = new JPanel(FLOW_LAYOUT_CENTER);
+	private JPanel buttonPanel = new JPanel(FLOW_LAYOUT_RIGHT);
 	
 	public CalculatePropertyTypeRatesWindow() {
-		setLayout(new GridLayout(5,1));
+//		setLayout(new GridLayout(5,1,0,4));
+		setLayout(new GridBagLayout());
 		this.setPanels();
 	}
 	
@@ -30,14 +34,12 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 		this.setPropertyPanel();
 		this.setValuePanel();
 		this.setCharityPanel();
-		JPanel a = new JPanel(new BorderLayout());
-		a.add(BorderLayout.WEST, valuePanel);
-		a.add(BorderLayout.EAST, charityPanel);
+		this.setButtonPanel();
 		this.add(titlePanel);
 		this.add(propertyPanel);
 		this.add(valuePanel);
 		this.add(charityPanel);
-//		this.add(a);
+		this.add(buttonPanel);
 	}
 	
 	public void setTitlePanel() {
@@ -105,6 +107,11 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 		this.charityPanel.add(borderLayout);
 	}
 
+	public void setButtonPanel() {
+		JButton submitButton = new JButton("Submit");
+		this.buttonPanel.add(submitButton);
+	}
+	
 	public static void createAndShowWindow() {
 		CalculatePropertyTypeRatesWindow window = new CalculatePropertyTypeRatesWindow();
 		window.setTitle("Border Layout Window");
