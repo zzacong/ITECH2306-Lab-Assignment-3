@@ -83,7 +83,8 @@ public class Validator {
 		try {
 		    Integer.parseInt(intInString);
 		    return true;
-		} catch (NumberFormatException nfExc) {
+		} 
+		catch (NumberFormatException nfExc) {
 			System.out.println("Unable to convert string to integer: " + nfExc.getMessage());
 		    return false;
 		}
@@ -93,7 +94,8 @@ public class Validator {
 		try {
 		    Double.parseDouble(intInString);
 		    return true;
-		} catch (NumberFormatException nfExc) {
+		}
+		catch (NumberFormatException nfExc) {
 			System.out.println("Unable to convert string to double: " + nfExc.getMessage());
 		    return false;
 		}
@@ -103,7 +105,8 @@ public class Validator {
 		try {
 		    Long.parseLong(longInString);
 		    return true;
-		} catch (NumberFormatException nfExc) {
+		} 
+		catch (NumberFormatException nfExc) {
 			System.out.println("Unable to convert string to long: " + nfExc.getMessage());
 		    return false;
 		}

@@ -16,3 +16,8 @@ V1.3
 - Change frame layout to GridBagLayout
 - Add Exit JButton
 - Add ActionListener for Exit and Submit JButtons
+
+V1.4
+- Display total rate costs after pressing Submit
+- Display error messages
+- Implement settings for SchoolCommunity property type
