@@ -11,19 +11,19 @@ import javax.swing.*;
  */
 public class ExitButtonListener implements ActionListener{
 
-	private JFrame window;
+	private JFrame target;
 	
-	public ExitButtonListener(JFrame window) {
-		this.setWindow(window);
+	public ExitButtonListener(JFrame target) {
+		this.setWindow(target);
 	}
 
-	public void setWindow(JFrame window) {
-		this.window = window;
+	public void setWindow(JFrame target) {
+		this.target = target;
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		this.window.dispose();
+		this.target.dispose();
 	}
 
 }

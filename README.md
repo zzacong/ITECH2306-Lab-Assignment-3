@@ -21,3 +21,7 @@ V1.4
 - Display total rate costs after pressing Submit
 - Display error messages
 - Implement settings for SchoolCommunity property type
+
+V1.5
+- Done implementing GUI
+- Done implementing all listeners

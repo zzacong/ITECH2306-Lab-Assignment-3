@@ -63,7 +63,7 @@ public class Residential extends Property {
 			throw new NullPointerException("Architectural style of Residential is null. Rejecting this record...");
 		}
 	}
-	
+
 	// Set up the extra services of Residential property type
 	@Override
 	public void setUpExtraServices() {

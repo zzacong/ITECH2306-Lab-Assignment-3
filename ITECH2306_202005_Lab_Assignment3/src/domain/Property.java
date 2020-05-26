@@ -209,7 +209,7 @@ public abstract class Property implements Serializable {
 			throw new NullPointerException(description + " of " + propertyType + " is null or empty. Rejecting this record...");
 		}
 	}
-	
+
 	public boolean getHasExtraServices() {
 		return hasExtraServices;
 	}
@@ -225,7 +225,7 @@ public abstract class Property implements Serializable {
 				+ calculateExtraServices()) *
 				(getOwner().isCharity() ? 1 - getOwner().getCharityDiscountPercentage() : 1);
 	}
-	
+		
 	public abstract void setUpExtraServices();
 	
 	public abstract double calculateExtraServices();

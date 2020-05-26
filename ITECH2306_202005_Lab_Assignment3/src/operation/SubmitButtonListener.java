@@ -6,14 +6,9 @@ import java.awt.event.ActionListener;
 import java.text.NumberFormat;
 
 import javax.swing.*;
+import javax.swing.text.BadLocationException;
 
-import domain.Commercial;
-import domain.Hospital;
-import domain.Industrial;
-import domain.OtherProperty;
-import domain.Property;
-import domain.Residential;
-import domain.SchoolCommunity;
+import domain.*;
 import utility.Validator;
 
 /**
@@ -22,86 +17,64 @@ import utility.Validator;
  */
 public class SubmitButtonListener implements ActionListener{
 	
-	private static final String RESIDENTIAL = "Residential",
-							 	COMMERCIAL = "Commercial",
-							 	VACANT_LAND = "VacantLand",
-							 	HOSPITAL = "Hospital",
-							 	INDUSTRIAL = "Industrial",
-							 	SCHOOL_COMMUNITY = "SchoolCommunity",
-							 	OTHER = "Other";
+	private static final int RESIDENTIAL = 0,
+			 				 COMMERCIAL = 1,
+							 VACANT_LAND = 2,
+							 HOSPITAL = 3,
+							 INDUSTRIAL = 4,
+							 SCHOOL_COMMUNITY = 5,
+							 OTHER = 6;
 	private static final String SMALL = "Small",
 		 						MEDIUM = "Medium",
 		 						LARGE = "Large";
 	private static final NumberFormat MYFORMAT = NumberFormat.getNumberInstance();
 	private static final boolean NON_EDITABLE = false;
 
-	private JFrame window;
-	private JLabel propertyLabel;
-	private ButtonGroup propertyGroup;
+	private CalculatePropertyTypeRatesWindow target;
 	private JLabel categoryLabel;
 	private ButtonGroup categoryGroup;
 	private JTextField valueField;
 	private JCheckBox charityBox;
 	private JPanel respondPanel;
+	private JPanel errorPanel;
 	
 	private String labelText;
-	private String propertyType;
+	private int propertyType;
 	private String category;
 	private double capitalImprovedValue;
 	
-	public SubmitButtonListener(JFrame window, JLabel propertyLabel, ButtonGroup propertyGroup, JLabel categoryLabel, ButtonGroup categoryGroup, JTextField valueField, JCheckBox charityBox, JPanel respondPanel) {
-		this.setWindow(window);
-		this.setPropertyLabel(propertyLabel);
-		this.setPropertyGroup(propertyGroup);
-		this.setCategoryLabel(categoryLabel);
-		this.setCategoryGroup(categoryGroup);
-		this.setValueField(valueField);
-		this.setCharityBox(charityBox);
-		this.setRespondPanel(respondPanel);
+	public SubmitButtonListener(JFrame frame) {
+		this.setTarget(frame);
+		this.setCategoryLabel(target.getCategoryLabel());
+		this.setCategoryGroup(target.getCategoryGroup());
+		this.setValueField(target.getValueField());
+		this.setCharityBox(target.getCharityBox());
+		this.setRespondPanel(target.getRespondPanel());
+		this.setErrorPanel(target.getErrorPanel());
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(validateInput(propertyGroup, categoryGroup, valueField.getText())) {
+		this.setPropertyType(target.getPropertyComboIndex());
+		if(validateInput(categoryGroup, valueField.getText())) {
+			showHideErrorMessage(errorPanel, false);
 			calculateRate();
+			// Disable button after click
+			JButton source = (JButton) e.getSource();
+	        source.setEnabled(false);
+	        target.getRetryButton().setVisible(true);
 		}
 		else {
-			showErrorMessage(respondPanel);
+			showHideErrorMessage(errorPanel, true);
 		}
 	}
 	
-	public boolean validateInput(ButtonGroup propertyGroup, ButtonGroup categoryGroup, String civInString) {
-		boolean pass = false;
-		if(isValidProperty(propertyGroup)) {
-			if(propertyType.equals(SCHOOL_COMMUNITY)) {
-				pass = isValidCategory(categoryGroup);
-			}
-			pass = true;
+	public boolean validateInput(ButtonGroup categoryGroup, String civInString) {
+		boolean pass = true;
+		if(propertyType == SCHOOL_COMMUNITY) {
+			pass = isValidCategory(categoryGroup);
 		}
-		if(isValidCIV(civInString) && pass) {
-			return true;
-		}
-		return false;
-	}
-	
-	public boolean isValidProperty(ButtonGroup propertyGroup) {
-		System.out.println("Validate Property:");
-		Object object = propertyGroup.getSelection(); 
-		if(object != null) {
-			propertyType = propertyGroup.getSelection().getActionCommand();
-			labelText = "Select one property type to calculate rate:";
-			propertyLabel.setText(labelText);
-			propertyLabel.setForeground(Color.black);
-			System.out.println(propertyType);
-			return true;
-		}
-		else {
-			labelText = "You must select one property type:";
-			propertyLabel.setText(labelText);
-			propertyLabel.setForeground(Color.red);
-			System.out.println(object);
-			return false;
-		}
+		return isValidCIV(civInString) && pass;
 	}
 	
 	public boolean isValidCIV(String civInString) {
@@ -182,24 +155,26 @@ public class SubmitButtonListener implements ActionListener{
 		}
 	}
 	
-	public void showErrorMessage(JPanel panel) {
-		panel = new JPanel(new BorderLayout());
-		panel.add(BorderLayout.CENTER, new JTextField("Invalid input. Unable to calculate property type rates."));
-		panel.setVisible(true);
-		this.window.pack();
-		this.window.setSize(new Dimension(window.getWidth() + 60, window.getHeight() + 60));
-	}
-	
 	public void addComponentsToRespondPanel(JPanel panel, Property property) {
 		MYFORMAT.setMinimumFractionDigits(2);
 		MYFORMAT.setMaximumFractionDigits(4);
-		
+		JTextField propertyTypeName = new JTextField(property.getClass().getSimpleName());
+		propertyTypeName.setEditable(NON_EDITABLE);
 		JTextField description = new JTextField(property.getDescription());
 		description.setEditable(NON_EDITABLE);
 		JTextField capitalImprovedValue = new JTextField(MYFORMAT.format(property.getCapitalImprovedValue()));
 		capitalImprovedValue.setEditable(NON_EDITABLE);
 		JTextField capitalImprovedRate = new JTextField(MYFORMAT.format(property.getCapitalImprovedRate()));
 		capitalImprovedRate.setEditable(NON_EDITABLE);
+		JTextArea extraServices = new JTextArea(property.getExtraServicesDetails());
+		extraServices.setEditable(NON_EDITABLE);
+		int end;
+		try {
+			end = extraServices.getLineEndOffset(1);
+			extraServices.replaceRange("", 1, end);
+		} catch (BadLocationException e) {
+			e.printStackTrace();
+		}
 		MYFORMAT.setMaximumFractionDigits(2);
 		JTextField totalRateCosts = new JTextField(MYFORMAT.format(property.calculateRates()));
 		totalRateCosts.setEditable(NON_EDITABLE);
@@ -209,54 +184,68 @@ public class SubmitButtonListener implements ActionListener{
 		GridBagConstraints c = new GridBagConstraints();
 		c.fill = GridBagConstraints.BOTH;
 		c.insets = new Insets(10,0,0,0);
+		c.ipadx = 10;
+
 		c.gridx = 0;
 		c.gridy = 0;
 		panel.add(new JLabel("Property type:"), c);
 		c.gridx = 0;
 		c.gridy = 1;
-		panel.add(new JLabel("Capital Improved Value:"), c);
+		panel.add(new JLabel("Description:"), c);
 		c.gridx = 0;
 		c.gridy = 2;
+		panel.add(new JLabel("Capital Improved Value:"), c);
+		c.gridx = 0;
+		c.gridy = 3;
 		panel.add(new JLabel("Capital Improved Rate:"), c);
+		c.gridx = 0;
+		c.gridy = 4;
+		panel.add(new JLabel("Extra services:"), c);
 		c.gridx = 0;
 		c.gridy = 6;
 		panel.add(new JLabel("Total Rate Costs:"), c);
-		c.ipadx = 10;
 		c.gridx = 1;
 		c.gridy = 0;
-		panel.add(description, c);
+		panel.add(propertyTypeName, c);
 		c.gridx = 1;
 		c.gridy = 1;
-		panel.add(capitalImprovedValue, c);
+		panel.add(description, c);
 		c.gridx = 1;
 		c.gridy = 2;
+		panel.add(capitalImprovedValue, c);
+		c.gridx = 1;
+		c.gridy = 3;
 		panel.add(capitalImprovedRate, c);
+		c.gridwidth = 2;
+		c.gridx = 0;
+		c.gridy = 5;
+		panel.add(extraServices, c);
+		c.gridwidth = 1;
 		c.gridx = 1;
 		c.gridy = 6;
 		panel.add(totalRateCosts, c);
 		
 		// Add respondPane to JFrame
-		c.anchor = GridBagConstraints.CENTER;
 		c.insets = new Insets(10,0,10,0);
 		c.ipady = 0;
 		c.gridx = 0;
 		c.gridy = 5;
-//		this.window.add(panel, c);
+		this.target.add(panel, c);
 		panel.setVisible(true);
-		this.window.pack();
-		this.window.setSize(new Dimension(window.getWidth() + 60, window.getHeight() + 60));
+		target.resizeWindow();
+	}
+	
+	public void showHideErrorMessage(JPanel panel, boolean show) {
+		panel.setVisible(show);
+		target.resizeWindow();
 	}
 
-	public void setWindow(JFrame window) {
-		this.window = window;
+	public void setTarget(JFrame target) {
+		this.target = (CalculatePropertyTypeRatesWindow) target;
 	}
 	
-	public void setPropertyLabel(JLabel propertyLabel) {
-		this.propertyLabel = propertyLabel;
-	}
-	
-	public void setPropertyGroup(ButtonGroup propertyGroup) {
-		this.propertyGroup = propertyGroup;
+	public void setPropertyType(int propertyType) {
+		this.propertyType = propertyType;
 	}
 
 	public void setCategoryLabel(JLabel categoryLabel) {
@@ -277,5 +266,9 @@ public class SubmitButtonListener implements ActionListener{
 
 	public void setRespondPanel(JPanel respondPanel) {
 		this.respondPanel = respondPanel;
+	}
+
+	public void setErrorPanel(JPanel errorPanel) {
+		this.errorPanel = errorPanel;
 	}
 }

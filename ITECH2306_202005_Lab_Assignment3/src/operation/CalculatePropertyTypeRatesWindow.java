@@ -21,7 +21,7 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 							 	VACANT_LAND = "VacantLand",
 							 	HOSPITAL = "Hospital",
 							 	INDUSTRIAL = "Industrial",
-							 	SCHOOL_COMMUNITY = "SchoolCommunity",
+							 	SCHOOL_COMMUNITY = "School/Community",
 							 	OTHER = "Other";
 	
 	private static final String SMALL = "Small",
@@ -34,10 +34,12 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 	private JPanel valuePanel = new JPanel(new BorderLayout());
 	private JPanel charityPanel = new JPanel(new BorderLayout());
 	private JPanel respondPanel = new JPanel();
+	private JPanel errorPanel = new JPanel(new BorderLayout());
+//	private JPanel buttonPanel = new JPanel(new GridBagLayout());
 	private JPanel buttonPanel = new JPanel(new BorderLayout());
 	
 	private JLabel propertyLabel;
-	private ButtonGroup propertyGroup;
+	private JComboBox<String> propertyCombo;
 	JLabel categoryLabel;
 	private ButtonGroup categoryGroup;
 	private JLabel valueLabel;
@@ -45,6 +47,7 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 	private JLabel charityLabel;
 	private JCheckBox charityBox;
 	private JButton submitButton;
+	private JButton retryButton;
 	private JButton exitButton;
 	
 	public CalculatePropertyTypeRatesWindow() {
@@ -60,6 +63,7 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 		this.setValuePanel(this.valuePanel);
 		this.setCharityPanel(this.charityPanel);
 //		this.setRespondPanel(this.respondPanel);
+		this.setErrorPanel(this.errorPanel);
 		this.setButtonPanel(this.buttonPanel);
 	}
 	
@@ -67,7 +71,6 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 		GridBagConstraints c = new GridBagConstraints();
 		
 		c.fill = GridBagConstraints.BOTH;
-		c.anchor = GridBagConstraints.CENTER;
 		c.insets = new Insets(10,0,10,0);
 
 		c.gridx = 0;
@@ -91,13 +94,21 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 		c.gridy = 4;
 		pane.add(this.charityPanel, c);
 		
-		c.gridx = 0;
-		c.gridy = 5;
-		pane.add(this.respondPanel, c);
-		respondPanel.setVisible(false);
+//		c.gridx = 0;
+//		c.gridy = 5;
+//		pane.add(this.respondPanel, c);
+//		respondPanel.setVisible(false);
 		
 		c.gridx = 0;
 		c.gridy = 6;
+		pane.add(this.errorPanel, c);
+		errorPanel.setVisible(false);
+		
+		c.fill = GridBagConstraints.NONE;
+		c.ipadx = 8;
+		c.ipady = 5;
+		c.gridx = 0;
+		c.gridy = 7;
 		pane.add(this.buttonPanel, c);	
 	}
 	
@@ -111,50 +122,28 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 		panel.add(BorderLayout.SOUTH, subTitleLabel);
 	}
 	
+
 	public void setPropertyPanel(JPanel panel) {
 		propertyLabel = new JLabel("Select a property type to calculate rate: ");
-		JRadioButton residentialButton = new JRadioButton("Residential");
-		residentialButton.setActionCommand(RESIDENTIAL);
-		JRadioButton commercialButton = new JRadioButton("Commercial");
-		commercialButton.setActionCommand(COMMERCIAL);
-		JRadioButton vacantLandButton = new JRadioButton("Vacant Land");
-		vacantLandButton.setActionCommand(VACANT_LAND);
-		JRadioButton hospitalButton = new JRadioButton("Hospital");
-		hospitalButton.setActionCommand(HOSPITAL);
-		JRadioButton industrialButton = new JRadioButton("Industrial");
-		industrialButton.setActionCommand(INDUSTRIAL);
-		JRadioButton schoolCommunityButton = new JRadioButton("School/Community");
-		schoolCommunityButton.setActionCommand(SCHOOL_COMMUNITY);
-		schoolCommunityButton.addItemListener(new ItemListener() {
+		String[] propertyTypeList = {RESIDENTIAL, COMMERCIAL, VACANT_LAND, HOSPITAL, INDUSTRIAL, SCHOOL_COMMUNITY, OTHER};
+		propertyCombo = new JComboBox<String>(propertyTypeList);
+//		propertyCombo.addItem(RESIDENTIAL);
+//		propertyCombo.addItem(COMMERCIAL);
+//		propertyCombo.addItem(VACANT_LAND);
+//		propertyCombo.addItem(HOSPITAL);
+//		propertyCombo.addItem(INDUSTRIAL);
+//		propertyCombo.addItem(SCHOOL_COMMUNITY);
+//		propertyCombo.addItem(OTHER);
+//		propertyCombo.setEditable(false);
+		propertyCombo.addItemListener(new ItemListener() {
 			@Override
 			public void itemStateChanged(ItemEvent e) {
-				showHideCategoryPanel(e.getStateChange() == ItemEvent.SELECTED);
+				showHideCategoryPanel(propertyCombo.getSelectedIndex() == 5);
 			}
 		});
 		
-		JRadioButton otherButton = new JRadioButton("Other");
-		otherButton.setActionCommand(OTHER);
-		
-		propertyGroup = new ButtonGroup();
-		propertyGroup.add(residentialButton);
-		propertyGroup.add(commercialButton);
-		propertyGroup.add(vacantLandButton);
-		propertyGroup.add(hospitalButton);
-		propertyGroup.add(industrialButton);
-		propertyGroup.add(schoolCommunityButton);
-		propertyGroup.add(otherButton);
-		
-		JPanel propertyButtons = new JPanel(new GridLayout(0,2));
-		propertyButtons.add(residentialButton);
-		propertyButtons.add(commercialButton);
-		propertyButtons.add(vacantLandButton);
-		propertyButtons.add(hospitalButton);
-		propertyButtons.add(industrialButton);
-		propertyButtons.add(schoolCommunityButton);
-		propertyButtons.add(otherButton);
-		
 		panel.add(BorderLayout.NORTH, propertyLabel);
-		panel.add(BorderLayout.CENTER, propertyButtons);
+		panel.add(BorderLayout.CENTER, propertyCombo);
 	}
 	
 	public void setCategoryPanel(JPanel panel) {
@@ -183,8 +172,7 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 	public void showHideCategoryPanel(boolean show) {
 		categoryGroup.clearSelection();
 		categoryPanel.setVisible(show);
-		this.pack();
-		this.setSize(new Dimension(this.getWidth() + 60, this.getHeight() + 60));
+		resizeWindow();
 	}
 	
 	public void setValuePanel(JPanel panel) {
@@ -205,29 +193,100 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 	}
 
 //	public void setRespondPanel(JPanel panel) {
-//		respondTable = new JTable();
-//		panel.add(BorderLayout.CENTER,respondTable);
+//		
 //	}
+	
+	public void setErrorPanel(JPanel panel) {
+		JLabel errorField = new JLabel("Invalid input. Unable to calculate property type rates.");
+		errorField.setForeground(Color.red);
+		panel.add(BorderLayout.CENTER, errorField);
+	}
 	
 	public void setButtonPanel(JPanel panel) {
 		submitButton = new JButton("Submit");
-		submitButton.addActionListener(new SubmitButtonListener(this, propertyLabel, propertyGroup, categoryLabel, categoryGroup, valueField, charityBox, respondPanel));
+		submitButton.addActionListener(new SubmitButtonListener(this));
+		retryButton = new JButton("Do it again");
+		retryButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Component component = (Component) e.getSource();
+		        JFrame frame = (JFrame) SwingUtilities.getRoot(component);
+		        frame.dispose();
+				createAndShowWindow();
+			}
+			
+		});
+		retryButton.setVisible(false);
 		exitButton = new JButton("Exit");
 		exitButton.addActionListener(new ExitButtonListener(this));
-		
+		BorderLayout borderLayout = (BorderLayout) panel.getLayout(); 
+		borderLayout.setHgap(10);
 		panel.add(BorderLayout.WEST, exitButton);
+		panel.add(BorderLayout.CENTER, retryButton);
 		panel.add(BorderLayout.EAST, submitButton);
 	}
 	
+	public JPanel getCharityPanel() {
+		return charityPanel;
+	}
+
+	public JPanel getRespondPanel() {
+		return respondPanel;
+	}
+	
+	public JPanel getErrorPanel() {
+		return errorPanel;
+	}
+
+	public JLabel getPropertyLabel() {
+		return propertyLabel;
+	}
+
+	public int getPropertyComboIndex() {
+		return propertyCombo.getSelectedIndex();
+	}
+	
+	public JLabel getCategoryLabel() {
+		return categoryLabel;
+	}
+
+	public ButtonGroup getCategoryGroup() {
+		return categoryGroup;
+	}
+
+	public JTextField getValueField() {
+		return valueField;
+	}
+
+	public JCheckBox getCharityBox() {
+		return charityBox;
+	}
+
+	public JButton getSubmitButton() {
+		return submitButton;
+	}
+	
+	public JButton getRetryButton() {
+		return retryButton;
+	}
+
+//	public JButton getExitButton() {
+//		return exitButton;
+//	}
+	
+	public void resizeWindow() {
+		this.pack();
+		this.setSize(new Dimension(this.getWidth() + 60, this.getHeight() + 60));
+	}
+
 	public static void createAndShowWindow() {
 		CalculatePropertyTypeRatesWindow window = new CalculatePropertyTypeRatesWindow();
 		window.setTitle("Calculate Property Type Rates");
 		window.pack();
-		window.setDefaultCloseOperation(EXIT_ON_CLOSE);
-//		window.setResizable(false);
 		window.setSize(new Dimension(window.getWidth() + 60, window.getHeight() + 60));
-		System.out.println(window.getSize());
-		System.out.println();
+		window.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		window.setResizable(false);
 		window.setVisible(true);
 	}
 	
