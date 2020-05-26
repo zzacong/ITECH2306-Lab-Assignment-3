@@ -89,6 +89,16 @@ public class Validator {
 		}
 	}
 	
+	public static boolean validateStringToDouble(String intInString) {
+		try {
+		    Double.parseDouble(intInString);
+		    return true;
+		} catch (NumberFormatException nfExc) {
+			System.out.println("Unable to convert string to double: " + nfExc.getMessage());
+		    return false;
+		}
+	}
+	
 	public static boolean validateStringToLong(String longInString) {
 		try {
 		    Long.parseLong(longInString);

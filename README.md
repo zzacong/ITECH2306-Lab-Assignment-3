@@ -11,3 +11,8 @@ V1.1
 
 V1.2
 - Added 'Submit' JButton
+
+V1.3
+- Change frame layout to GridBagLayout
+- Add Exit JButton
+- Add ActionListener for Exit and Submit JButtons
