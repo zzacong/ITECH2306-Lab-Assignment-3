@@ -4,6 +4,9 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.text.NumberFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Enumeration;
 
 import javax.swing.*;
 import javax.swing.text.BadLocationException;
@@ -33,6 +36,7 @@ public class SubmitButtonListener implements ActionListener{
 	private CalculatePropertyTypeRatesWindow target;
 	private JLabel categoryLabel;
 	private ButtonGroup categoryGroup;
+	private JLabel valueLabel;
 	private JTextField valueField;
 	private JCheckBox charityBox;
 	private JPanel respondPanel;
@@ -47,6 +51,7 @@ public class SubmitButtonListener implements ActionListener{
 		this.setTarget(frame);
 		this.setCategoryLabel(target.getCategoryLabel());
 		this.setCategoryGroup(target.getCategoryGroup());
+		this.setValueLabel(target.getValueLabel());
 		this.setValueField(target.getValueField());
 		this.setCharityBox(target.getCharityBox());
 		this.setRespondPanel(target.getRespondPanel());
@@ -57,16 +62,29 @@ public class SubmitButtonListener implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		this.setPropertyType(target.getPropertyComboIndex());
 		if(validateInput(categoryGroup, valueField.getText())) {
+			// Hide the error message panel
 			showHideErrorMessage(errorPanel, false);
+			// Calculate the property rates based on the property type
 			calculateRate();
-			// Disable button after click
-			JButton source = (JButton) e.getSource();
-	        source.setEnabled(false);
-	        target.getRetryButton().setVisible(true);
+			// Disable/Show relevent components after click
+			disableReleventComponents();
 		}
 		else {
+			// Show the eror message panel
 			showHideErrorMessage(errorPanel, true);
 		}
+	}
+	
+	public void disableReleventComponents() {
+		target.getPropertyCombo().setEnabled(NON_EDITABLE);
+		ArrayList<AbstractButton> allRadioButtons = Collections.list(categoryGroup.getElements());
+		for(AbstractButton button : allRadioButtons) {
+			button.setEnabled(NON_EDITABLE);
+		}
+		valueField.setEnabled(NON_EDITABLE);
+		charityBox.setEnabled(NON_EDITABLE);
+        target.getSubmitButton().setEnabled(NON_EDITABLE);
+        target.getRetryButton().setVisible(true);
 	}
 	
 	public boolean validateInput(ButtonGroup categoryGroup, String civInString) {
@@ -78,37 +96,34 @@ public class SubmitButtonListener implements ActionListener{
 	}
 	
 	public boolean isValidCIV(String civInString) {
-		System.out.println("Validate CIV:");
 		if(Validator.validateString("Capital Improved Value", civInString)) {
 			if(Validator.validateStringToDouble(civInString)) {
 				this.capitalImprovedValue = Double.parseDouble(civInString);
 				if(Validator.checkDoubleWithinRange("Capital Improved Rate", capitalImprovedValue, 100.00, 50000000.00)) {
+					valueLabel.setForeground(Color.black);
 					valueField.setBackground(Color.white);
-					System.out.println(capitalImprovedValue);
 					return true;
 				}
 			}
 		}
-		valueField.setBackground(Color.red);
+		valueLabel.setForeground(Color.red);
+		valueField.setBackground(new Color(255, 150, 150));
 		return false;
 	}
 
 	public boolean isValidCategory(ButtonGroup categoryGroup) {
-		System.out.println("Validate Category:");
 		Object object = categoryGroup.getSelection();
 		if(object != null) {
 			category = categoryGroup.getSelection().getActionCommand();
 			labelText = "Select a category for your School/Community:";
 			categoryLabel.setText(labelText);
 			categoryLabel.setForeground(Color.black);
-			System.out.println(category);
 			return true;
 		}
 		else {
 			labelText = "You must select one category:";
 			categoryLabel.setText(labelText);
 			categoryLabel.setForeground(Color.red);
-			System.out.println(object);
 			return false;
 		}
 	}
@@ -230,7 +245,7 @@ public class SubmitButtonListener implements ActionListener{
 		c.ipady = 0;
 		c.gridx = 0;
 		c.gridy = 5;
-		this.target.add(panel, c);
+		this.target.getMainPanel().add(panel, c);
 		panel.setVisible(true);
 		target.resizeWindow();
 	}
@@ -254,6 +269,10 @@ public class SubmitButtonListener implements ActionListener{
 
 	public void setCategoryGroup(ButtonGroup categoryGroup) {
 		this.categoryGroup = categoryGroup;
+	}
+	
+	public void setValueLabel(JLabel valueLabel) {
+		this.valueLabel = valueLabel;
 	}
 
 	public void setValueField(JTextField valueField) {

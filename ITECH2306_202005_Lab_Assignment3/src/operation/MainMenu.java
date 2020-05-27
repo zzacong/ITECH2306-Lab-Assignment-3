@@ -77,7 +77,7 @@ public class MainMenu {
 				fd = new AddProperty(console);
 				break;
 			case 3:
-				fd = new CalculatePropertyTypeRates(console);
+				fd = new CalculatePropertyTypeRatesGUI(console);
 				break;
 			case 4:
 				fd = new QueryRatePayer(console);

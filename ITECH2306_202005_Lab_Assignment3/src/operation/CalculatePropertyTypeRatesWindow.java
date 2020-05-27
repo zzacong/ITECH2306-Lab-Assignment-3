@@ -28,6 +28,7 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 								MEDIUM = "Medium",
 								LARGE = "Large";
 
+	private JPanel mainPanel = new JPanel(new GridBagLayout());
 	private JPanel titlePanel = new JPanel(new BorderLayout());
 	private JPanel propertyPanel = new JPanel(new BorderLayout());
 	private JPanel categoryPanel = new JPanel(new BorderLayout());
@@ -35,12 +36,11 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 	private JPanel charityPanel = new JPanel(new BorderLayout());
 	private JPanel respondPanel = new JPanel();
 	private JPanel errorPanel = new JPanel(new BorderLayout());
-//	private JPanel buttonPanel = new JPanel(new GridBagLayout());
 	private JPanel buttonPanel = new JPanel(new BorderLayout());
-	
+
 	private JLabel propertyLabel;
 	private JComboBox<String> propertyCombo;
-	JLabel categoryLabel;
+	private JLabel categoryLabel;
 	private ButtonGroup categoryGroup;
 	private JLabel valueLabel;
 	private JTextField valueField;
@@ -51,9 +51,9 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 	private JButton exitButton;
 	
 	public CalculatePropertyTypeRatesWindow() {
-		setLayout(new GridBagLayout());
 		this.setUpPanels();
-		this.addPanelsToFrame(this.getContentPane());
+		this.addPanelsToMain(this.mainPanel);
+		this.addMainPanelToFrame(this.getContentPane());
 	}
 	
 	public void setUpPanels() {
@@ -62,12 +62,11 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 		this.setCategoryPanel(this.categoryPanel);
 		this.setValuePanel(this.valuePanel);
 		this.setCharityPanel(this.charityPanel);
-//		this.setRespondPanel(this.respondPanel);
 		this.setErrorPanel(this.errorPanel);
 		this.setButtonPanel(this.buttonPanel);
 	}
 	
-	public void addPanelsToFrame(Container pane) {
+	public void addPanelsToMain(JPanel panel) {
 		GridBagConstraints c = new GridBagConstraints();
 		
 		c.fill = GridBagConstraints.BOTH;
@@ -75,33 +74,28 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 
 		c.gridx = 0;
 		c.gridy = 0;
-		pane.add(this.titlePanel, c);
+		panel.add(this.titlePanel, c);
 		
 		c.gridx = 0;
 		c.gridy = 1;
-		pane.add(this.propertyPanel, c);
+		panel.add(this.propertyPanel, c);
 		
 		c.gridx = 0;
 		c.gridy = 2;
-		pane.add(this.categoryPanel, c);
+		panel.add(this.categoryPanel, c);
 		categoryPanel.setVisible(false);
 		
 		c.gridx = 0;
 		c.gridy = 3;
-		pane.add(this.valuePanel, c);
+		panel.add(this.valuePanel, c);
 		
 		c.gridx = 0;
 		c.gridy = 4;
-		pane.add(this.charityPanel, c);
-		
-//		c.gridx = 0;
-//		c.gridy = 5;
-//		pane.add(this.respondPanel, c);
-//		respondPanel.setVisible(false);
+		panel.add(this.charityPanel, c);
 		
 		c.gridx = 0;
 		c.gridy = 6;
-		pane.add(this.errorPanel, c);
+		panel.add(this.errorPanel, c);
 		errorPanel.setVisible(false);
 		
 		c.fill = GridBagConstraints.NONE;
@@ -109,7 +103,11 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 		c.ipady = 5;
 		c.gridx = 0;
 		c.gridy = 7;
-		pane.add(this.buttonPanel, c);	
+		panel.add(this.buttonPanel, c);	
+	}
+	
+	public void addMainPanelToFrame(Container pane) {
+		pane.add(BorderLayout.CENTER, this.mainPanel);
 	}
 	
 	public void setTitlePanel(JPanel panel) {
@@ -127,19 +125,13 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 		propertyLabel = new JLabel("Select a property type to calculate rate: ");
 		String[] propertyTypeList = {RESIDENTIAL, COMMERCIAL, VACANT_LAND, HOSPITAL, INDUSTRIAL, SCHOOL_COMMUNITY, OTHER};
 		propertyCombo = new JComboBox<String>(propertyTypeList);
-//		propertyCombo.addItem(RESIDENTIAL);
-//		propertyCombo.addItem(COMMERCIAL);
-//		propertyCombo.addItem(VACANT_LAND);
-//		propertyCombo.addItem(HOSPITAL);
-//		propertyCombo.addItem(INDUSTRIAL);
-//		propertyCombo.addItem(SCHOOL_COMMUNITY);
-//		propertyCombo.addItem(OTHER);
-//		propertyCombo.setEditable(false);
 		propertyCombo.addItemListener(new ItemListener() {
+			
 			@Override
 			public void itemStateChanged(ItemEvent e) {
 				showHideCategoryPanel(propertyCombo.getSelectedIndex() == 5);
 			}
+			
 		});
 		
 		panel.add(BorderLayout.NORTH, propertyLabel);
@@ -191,10 +183,6 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 		panel.add(BorderLayout.NORTH, charityLabel);
 		panel.add(BorderLayout.CENTER, charityBox);
 	}
-
-//	public void setRespondPanel(JPanel panel) {
-//		
-//	}
 	
 	public void setErrorPanel(JPanel panel) {
 		JLabel errorField = new JLabel("Invalid input. Unable to calculate property type rates.");
@@ -203,6 +191,7 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 	}
 	
 	public void setButtonPanel(JPanel panel) {
+//		panel = new JPanel(new BorderLayout());
 		submitButton = new JButton("Submit");
 		submitButton.addActionListener(new SubmitButtonListener(this));
 		retryButton = new JButton("Do it again");
@@ -211,12 +200,17 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				Component component = (Component) e.getSource();
-		        JFrame frame = (JFrame) SwingUtilities.getRoot(component);
-		        frame.dispose();
-				createAndShowWindow();
+				CalculatePropertyTypeRatesWindow frame = (CalculatePropertyTypeRatesWindow) SwingUtilities.getRoot(component);
+		        frame.remove(frame.mainPanel);
+		        frame.removeComponentsOnAllPanels();
+		        frame.setUpPanels();
+		        frame.addPanelsToMain(frame.mainPanel);
+		        frame.addMainPanelToFrame(frame.getContentPane());
+		        frame.resizeWindow();
 			}
 			
 		});
+		
 		retryButton.setVisible(false);
 		exitButton = new JButton("Exit");
 		exitButton.addActionListener(new ExitButtonListener(this));
@@ -225,6 +219,22 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 		panel.add(BorderLayout.WEST, exitButton);
 		panel.add(BorderLayout.CENTER, retryButton);
 		panel.add(BorderLayout.EAST, submitButton);
+	}
+	
+	public void removeComponentsOnAllPanels() {
+		this.mainPanel.removeAll();
+		this.titlePanel.removeAll();
+		this.propertyPanel.removeAll();
+		this.categoryPanel.removeAll();
+		this.valuePanel.removeAll();
+		this.charityPanel.removeAll();
+		this.respondPanel.removeAll();
+		this.errorPanel.removeAll();
+		this.buttonPanel.removeAll();
+	}
+	
+	public JPanel getMainPanel() {
+		return mainPanel;
 	}
 	
 	public JPanel getCharityPanel() {
@@ -242,6 +252,10 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 	public JLabel getPropertyLabel() {
 		return propertyLabel;
 	}
+	
+	public JComboBox<String> getPropertyCombo() {
+		return propertyCombo;
+	}
 
 	public int getPropertyComboIndex() {
 		return propertyCombo.getSelectedIndex();
@@ -253,6 +267,10 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 
 	public ButtonGroup getCategoryGroup() {
 		return categoryGroup;
+	}
+	
+	public JLabel getValueLabel() {
+		return valueLabel;
 	}
 
 	public JTextField getValueField() {
@@ -271,27 +289,22 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 		return retryButton;
 	}
 
-//	public JButton getExitButton() {
-//		return exitButton;
-//	}
-	
 	public void resizeWindow() {
 		this.pack();
 		this.setSize(new Dimension(this.getWidth() + 60, this.getHeight() + 60));
 	}
 
-	public static void createAndShowWindow() {
-		CalculatePropertyTypeRatesWindow window = new CalculatePropertyTypeRatesWindow();
-		window.setTitle("Calculate Property Type Rates");
-		window.pack();
-		window.setSize(new Dimension(window.getWidth() + 60, window.getHeight() + 60));
-		window.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		window.setResizable(false);
-		window.setVisible(true);
+	public void createAndShowWindow() {
+		this.setTitle("Calculate Property Type Rates - Zhi Zao Ong 30360914");
+		this.resizeWindow();
+		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+		this.setResizable(false);
+		this.setVisible(true);
 	}
 	
 	public static void main(String[] args) {
-		createAndShowWindow();	
+		CalculatePropertyTypeRatesWindow window = new CalculatePropertyTypeRatesWindow();
+		window.createAndShowWindow();	
 	}
 
 }

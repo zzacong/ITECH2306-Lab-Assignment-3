@@ -25,3 +25,9 @@ V1.4
 V1.5
 - Done implementing GUI
 - Done implementing all listeners
+
+V1.6
+- Reimplement "Retry" button action
+- Add CalculatePropertyTypeRatesWindow class into the Console operation
+- Created CalculatePropertyTypeRatesGUI class to replace CalculatePropertyTypeRates class
+- Disable relevent components after clicking Submit button and passes validation
