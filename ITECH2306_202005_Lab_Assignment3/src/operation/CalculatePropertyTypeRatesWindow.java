@@ -80,12 +80,13 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 		// Resize the child panels on both vertical and horizontal axis
 		c.fill = GridBagConstraints.BOTH;
 		// Leave some space/gap between child panels
-		c.insets = new Insets(10,0,10,0);
+		c.insets = new Insets(10,0,20,0);
 
 		c.gridx = 0;
 		c.gridy = 0;
 		panel.add(this.titlePanel, c);
 		
+		c.insets = new Insets(10,0,10,0);
 		c.gridx = 0;
 		c.gridy = 1;
 		panel.add(this.propertyPanel, c);
@@ -125,13 +126,17 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 	// Add relevent components to the titlePanel
 	// Here I display the title as it would in the console
 	public void setTitlePanel(JPanel panel) {
-		JLabel titleLabel = new JLabel("  Council Rate Payer System", SwingConstants.CENTER);
+		JLabel titleLabel = new JLabel(" Council Rate Payer System", SwingConstants.CENTER);
 		JLabel lineLabel = new JLabel("==================", SwingConstants.CENTER);
-		JLabel subTitleLabel = new JLabel("Calculate Property Type Rates", SwingConstants.CENTER);
+		JLabel subtitleLabel = new JLabel("Calculate Property Type Rates", SwingConstants.CENTER);
+		Font titleFont = new Font("SansSerif", Font.PLAIN, 14);
+		titleLabel.setFont(titleFont);
+		lineLabel.setFont(titleFont);
+		subtitleLabel.setFont(titleFont);
 
 		panel.add(BorderLayout.NORTH, titleLabel);
 		panel.add(BorderLayout.CENTER, lineLabel);
-		panel.add(BorderLayout.SOUTH, subTitleLabel);
+		panel.add(BorderLayout.SOUTH, subtitleLabel);
 	}
 	
 	// Add relevent components to the propertyPanel

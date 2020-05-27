@@ -34,3 +34,7 @@ V1.6
 
 V1.7
 - Add comments to improve code understanding
+
+V1.8
+- Add percentage sign and dollar sign for display
+- Increase title label font size

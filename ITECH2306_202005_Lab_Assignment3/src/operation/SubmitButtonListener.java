@@ -192,14 +192,14 @@ public class SubmitButtonListener implements ActionListener{
 	// Property type, description, CIV, CIV rate, extra services, total rate costs are displayed 
 	public void addComponentsToRespondPanel(JPanel panel, Property property) {
 		MYFORMAT.setMinimumFractionDigits(2);
-		MYFORMAT.setMaximumFractionDigits(4);
+		MYFORMAT.setMaximumFractionDigits(2);
 		JTextField propertyTypeName = new JTextField(property.getClass().getSimpleName());
 		propertyTypeName.setEditable(NON_EDITABLE);
 		JTextField description = new JTextField(property.getDescription());
 		description.setEditable(NON_EDITABLE);
-		JTextField capitalImprovedValue = new JTextField(MYFORMAT.format(property.getCapitalImprovedValue()));
+		JTextField capitalImprovedValue = new JTextField("$" + MYFORMAT.format(property.getCapitalImprovedValue()));
 		capitalImprovedValue.setEditable(NON_EDITABLE);
-		JTextField capitalImprovedRate = new JTextField(MYFORMAT.format(property.getCapitalImprovedRate()));
+		JTextField capitalImprovedRate = new JTextField(MYFORMAT.format(property.getCapitalImprovedRate()*100) + "%");
 		capitalImprovedRate.setEditable(NON_EDITABLE);
 		JTextArea extraServices = new JTextArea(property.getExtraServicesDetails());
 		extraServices.setEditable(NON_EDITABLE);
@@ -211,8 +211,7 @@ public class SubmitButtonListener implements ActionListener{
 		} catch (BadLocationException e) {
 			e.printStackTrace();
 		}
-		MYFORMAT.setMaximumFractionDigits(2);
-		JTextField totalRateCosts = new JTextField(MYFORMAT.format(property.calculateRates()));
+		JTextField totalRateCosts = new JTextField("$" + MYFORMAT.format(property.calculateRates()));
 		totalRateCosts.setEditable(NON_EDITABLE);
 		totalRateCosts.setFont(new Font("SansSerif", Font.BOLD, 14));
 		
