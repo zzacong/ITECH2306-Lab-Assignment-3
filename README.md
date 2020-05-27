@@ -30,4 +30,7 @@ V1.6
 - Reimplement "Retry" button action
 - Add CalculatePropertyTypeRatesWindow class into the Console operation
 - Created CalculatePropertyTypeRatesGUI class to replace CalculatePropertyTypeRates class
-- Disable relevent components after clicking Submit button and passes validation
+- Disable relevant components after clicking Submit button and passes validation
+
+V1.7
+- Add comments to improve code understanding

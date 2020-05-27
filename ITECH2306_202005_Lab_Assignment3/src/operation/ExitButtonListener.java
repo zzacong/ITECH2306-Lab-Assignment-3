@@ -23,6 +23,7 @@ public class ExitButtonListener implements ActionListener{
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
+		// Dispose the target window when ActionListener is triggered
 		this.target.dispose();
 	}
 

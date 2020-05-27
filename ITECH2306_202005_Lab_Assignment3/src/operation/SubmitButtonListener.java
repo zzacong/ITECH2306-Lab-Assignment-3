@@ -32,7 +32,8 @@ public class SubmitButtonListener implements ActionListener{
 		 						LARGE = "Large";
 	private static final NumberFormat MYFORMAT = NumberFormat.getNumberInstance();
 	private static final boolean NON_EDITABLE = false;
-
+	
+	
 	private CalculatePropertyTypeRatesWindow target;
 	private JLabel categoryLabel;
 	private ButtonGroup categoryGroup;
@@ -47,6 +48,8 @@ public class SubmitButtonListener implements ActionListener{
 	private String category;
 	private double capitalImprovedValue;
 	
+	// Receives passed in JFrame, in this case, the CalculatePropertyTypeRatesWindow
+	// Use setters to retrieve the relevent components from the CalculatePropertyTypeRatesWindow object
 	public SubmitButtonListener(JFrame frame) {
 		this.setTarget(frame);
 		this.setCategoryLabel(target.getCategoryLabel());
@@ -58,23 +61,30 @@ public class SubmitButtonListener implements ActionListener{
 		this.setErrorPanel(target.getErrorPanel());
 	}
 	
+	// This method is performed when the ActionListener is triggered
+	// It first get the property type selected
+	// Then validate relevent inputs - CIV, category (if SchoolCommunity is selected)
+	// Show/Hide the error message panel
+	// When passes validation
+			// Calculate the property rates based on the property type if passes validation
+			// Disable relevent components to prevent further changes
+			// Show the retryButton
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		this.setPropertyType(target.getPropertyComboIndex());
 		if(validateInput(categoryGroup, valueField.getText())) {
-			// Hide the error message panel
 			showHideErrorMessage(errorPanel, false);
-			// Calculate the property rates based on the property type
 			calculateRate();
-			// Disable/Show relevent components after click
 			disableReleventComponents();
 		}
 		else {
-			// Show the eror message panel
 			showHideErrorMessage(errorPanel, true);
 		}
 	}
 	
+	// Used to disable the relevent components to prevent further changes
+	// Disable submitButton
+	// Show retryButton
 	public void disableReleventComponents() {
 		target.getPropertyCombo().setEnabled(NON_EDITABLE);
 		ArrayList<AbstractButton> allRadioButtons = Collections.list(categoryGroup.getElements());
@@ -87,6 +97,7 @@ public class SubmitButtonListener implements ActionListener{
         target.getRetryButton().setVisible(true);
 	}
 	
+	// Validation method to check valid CIV and category
 	public boolean validateInput(ButtonGroup categoryGroup, String civInString) {
 		boolean pass = true;
 		if(propertyType == SCHOOL_COMMUNITY) {
@@ -95,6 +106,7 @@ public class SubmitButtonListener implements ActionListener{
 		return isValidCIV(civInString) && pass;
 	}
 	
+	// Validate the input CIV
 	public boolean isValidCIV(String civInString) {
 		if(Validator.validateString("Capital Improved Value", civInString)) {
 			if(Validator.validateStringToDouble(civInString)) {
@@ -111,6 +123,8 @@ public class SubmitButtonListener implements ActionListener{
 		return false;
 	}
 
+	// Validate the input category ButtonGroup
+	// Check if there is one JRadioButton selected
 	public boolean isValidCategory(ButtonGroup categoryGroup) {
 		Object object = categoryGroup.getSelection();
 		if(object != null) {
@@ -128,6 +142,8 @@ public class SubmitButtonListener implements ActionListener{
 		}
 	}
 	
+	// Determine the property type selected and call the corresponding constructor
+	// Also set the property CIV, extra services, and owner charity status
 	public void calculateRate() {
 		Property property = null;
 		switch (propertyType) {
@@ -170,6 +186,10 @@ public class SubmitButtonListener implements ActionListener{
 		}
 	}
 	
+	// Here the respondPanel is set up
+	// Add succifient information of the property to display on the window
+	// The panel use a GridBagLayout to display the information in a table view
+	// Property type, description, CIV, CIV rate, extra services, total rate costs are displayed 
 	public void addComponentsToRespondPanel(JPanel panel, Property property) {
 		MYFORMAT.setMinimumFractionDigits(2);
 		MYFORMAT.setMaximumFractionDigits(4);
@@ -183,6 +203,7 @@ public class SubmitButtonListener implements ActionListener{
 		capitalImprovedRate.setEditable(NON_EDITABLE);
 		JTextArea extraServices = new JTextArea(property.getExtraServicesDetails());
 		extraServices.setEditable(NON_EDITABLE);
+		// Remove the second line from the extraservice toString()
 		int end;
 		try {
 			end = extraServices.getLineEndOffset(1);
@@ -240,7 +261,7 @@ public class SubmitButtonListener implements ActionListener{
 		c.gridy = 6;
 		panel.add(totalRateCosts, c);
 		
-		// Add respondPane to JFrame
+		// Add respondPane to mainPanel
 		c.insets = new Insets(10,0,10,0);
 		c.ipady = 0;
 		c.gridx = 0;
@@ -250,6 +271,7 @@ public class SubmitButtonListener implements ActionListener{
 		target.resizeWindow();
 	}
 	
+	// This method is used to control the visibility of errorPanel 
 	public void showHideErrorMessage(JPanel panel, boolean show) {
 		panel.setVisible(show);
 		target.resizeWindow();

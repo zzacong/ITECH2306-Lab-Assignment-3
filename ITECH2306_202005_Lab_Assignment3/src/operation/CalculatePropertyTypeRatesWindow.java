@@ -28,6 +28,8 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 								MEDIUM = "Medium",
 								LARGE = "Large";
 
+	// The JFrame consists of a main panel that has a few child panels on it
+	// The mainPanel uses a GridBagLayout wheareas all the child panels use BorderLayout
 	private JPanel mainPanel = new JPanel(new GridBagLayout());
 	private JPanel titlePanel = new JPanel(new BorderLayout());
 	private JPanel propertyPanel = new JPanel(new BorderLayout());
@@ -38,6 +40,7 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 	private JPanel errorPanel = new JPanel(new BorderLayout());
 	private JPanel buttonPanel = new JPanel(new BorderLayout());
 
+	// These are all the components needed, components of respondPanel are set up in SubmitButtonListener
 	private JLabel propertyLabel;
 	private JComboBox<String> propertyCombo;
 	private JLabel categoryLabel;
@@ -50,12 +53,15 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 	private JButton retryButton;
 	private JButton exitButton;
 	
+	// The frame/window itself uses the default BorderLayout
 	public CalculatePropertyTypeRatesWindow() {
 		this.setUpPanels();
 		this.addPanelsToMain(this.mainPanel);
 		this.addMainPanelToFrame(this.getContentPane());
 	}
 	
+	// Set up all child panels required to display information and obtain inputs, except the respondPanel,
+	// respondPanel are set up after Submit button is triggered
 	public void setUpPanels() {
 		this.setTitlePanel(this.titlePanel);
 		this.setPropertyPanel(this.propertyPanel);
@@ -66,10 +72,14 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 		this.setButtonPanel(this.buttonPanel);
 	}
 	
+	// Add all child panels to the main panel
+	// The main panel uses a GridBagLayout, each child panel belongs to a specified row and column
 	public void addPanelsToMain(JPanel panel) {
 		GridBagConstraints c = new GridBagConstraints();
 		
+		// Resize the child panels on both vertical and horizontal axis
 		c.fill = GridBagConstraints.BOTH;
+		// Leave some space/gap between child panels
 		c.insets = new Insets(10,0,10,0);
 
 		c.gridx = 0;
@@ -98,6 +108,7 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 		panel.add(this.errorPanel, c);
 		errorPanel.setVisible(false);
 		
+		// Don't resize the buttonPanel
 		c.fill = GridBagConstraints.NONE;
 		c.ipadx = 8;
 		c.ipady = 5;
@@ -106,10 +117,13 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 		panel.add(this.buttonPanel, c);	
 	}
 	
+	// Add the main panel to the frame/window
 	public void addMainPanelToFrame(Container pane) {
 		pane.add(BorderLayout.CENTER, this.mainPanel);
 	}
 	
+	// Add relevent components to the titlePanel
+	// Here I display the title as it would in the console
 	public void setTitlePanel(JPanel panel) {
 		JLabel titleLabel = new JLabel("  Council Rate Payer System", SwingConstants.CENTER);
 		JLabel lineLabel = new JLabel("==================", SwingConstants.CENTER);
@@ -120,7 +134,11 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 		panel.add(BorderLayout.SOUTH, subTitleLabel);
 	}
 	
-
+	// Add relevent components to the propertyPanel
+	// Here I use a JComboBox to display the list of property types, by default, Residential will be chosen
+	// The JComboBox has a ItemListener attached:
+	// Everytime a user changes the combo box selection, it checks if School/Community is selected
+	// If School/Community is selected, it displays the categoryPanel
 	public void setPropertyPanel(JPanel panel) {
 		propertyLabel = new JLabel("Select a property type to calculate rate: ");
 		String[] propertyTypeList = {RESIDENTIAL, COMMERCIAL, VACANT_LAND, HOSPITAL, INDUSTRIAL, SCHOOL_COMMUNITY, OTHER};
@@ -138,6 +156,10 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 		panel.add(BorderLayout.CENTER, propertyCombo);
 	}
 	
+	// Add relevent components to the categoryPanel
+	// By default, this panel is not visible
+	// Will be displayed when user select School/Community from the property JComboBox   
+	// The categories uses JRadioButton and are grouped under a ButtonGroup
 	public void setCategoryPanel(JPanel panel) {
 		categoryLabel = new JLabel("Select a category for your School/Community:");
 		JRadioButton smallButton = new JRadioButton("Small category");
@@ -161,12 +183,15 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 		panel.add(BorderLayout.CENTER, categoryButtons);
 	}
 	
+	// This method is used to control the visibility of categoryPanel
 	public void showHideCategoryPanel(boolean show) {
 		categoryGroup.clearSelection();
 		categoryPanel.setVisible(show);
 		resizeWindow();
 	}
 	
+	// Add relevent components to the valuePanel
+	// Here a JTextField is used as an input field for the user to key in the CIV of the property
 	public void setValuePanel(JPanel panel) {
 		valueLabel = new JLabel("Enter the value of property (100.00-50 000 000.00): ");
 		valueField = new JTextField();
@@ -176,6 +201,8 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 		panel.add(BorderLayout.CENTER, valueField);
 	}
 	
+	// Add relevent components to the charityPanel
+	// Here a JCheckBox is used to select charity status 
 	public void setCharityPanel(JPanel panel) {
 		charityLabel = new JLabel("Tick if Rate Payer has a charitable status:");
 		charityBox = new JCheckBox("Charitable status");
@@ -184,14 +211,25 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 		panel.add(BorderLayout.CENTER, charityBox);
 	}
 	
+	// By default, this panel is not visible 
+	// Will be displayed when catches invalid inputs after Submit button is triggered 
 	public void setErrorPanel(JPanel panel) {
 		JLabel errorField = new JLabel("Invalid input. Unable to calculate property type rates.");
 		errorField.setForeground(Color.red);
 		panel.add(BorderLayout.CENTER, errorField);
 	}
 	
+	// Add relevent buttons to the buttonPanel
+	// There are three buttons: exitButton, retryButton, submitButton
+	// exitButton disposes the window when triggered, is attached with ExitButtonListener
+	// retryButton allow user to calculate rate for another property, it reset the window back to initial state
+			// is attached with an anonymous ActionListener
+			// by default, it is not visible
+			// will be displayed after a succesful rate calculation is performed
+	// submitButton validate all inputs, then calculate the property rate or display error message based on the validation result
+			// is attached with SubmitButtonListener
+			// will be disabled after a succesful rate calculation is performed
 	public void setButtonPanel(JPanel panel) {
-//		panel = new JPanel(new BorderLayout());
 		submitButton = new JButton("Submit");
 		submitButton.addActionListener(new SubmitButtonListener(this));
 		retryButton = new JButton("Do it again");
@@ -221,6 +259,9 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 		panel.add(BorderLayout.EAST, submitButton);
 	}
 	
+	// This method is used to remove all components on all panels
+	// So that we can set up the panels again
+	// Used when a user trigger the retryButton
 	public void removeComponentsOnAllPanels() {
 		this.mainPanel.removeAll();
 		this.titlePanel.removeAll();
@@ -233,6 +274,8 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 		this.buttonPanel.removeAll();
 	}
 	
+	// Provides a list of getters for SubmitButtonListener to retrieve relevent components from this object
+	// So we don't have to pass in too many arguments when calling the ActionListener, i.e. SubmitButtonListener
 	public JPanel getMainPanel() {
 		return mainPanel;
 	}
@@ -288,12 +331,15 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 	public JButton getRetryButton() {
 		return retryButton;
 	}
-
+	
+	// This method is used to resize the window to wrap all components
+	// Then enlarge the window by a bit to have some space surrounding its contents 
 	public void resizeWindow() {
 		this.pack();
 		this.setSize(new Dimension(this.getWidth() + 60, this.getHeight() + 60));
 	}
-
+	
+	// Display the window 
 	public void createAndShowWindow() {
 		this.setTitle("Calculate Property Type Rates - Zhi Zao Ong 30360914");
 		this.resizeWindow();
@@ -302,9 +348,11 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 		this.setVisible(true);
 	}
 	
-	public static void main(String[] args) {
-		CalculatePropertyTypeRatesWindow window = new CalculatePropertyTypeRatesWindow();
-		window.createAndShowWindow();	
-	}
+	// The main method is provided for standalone testing of the GUI, 
+	// without having to run through CouncilSystem class from the console, it is now disabled
+//	public static void main(String[] args) {
+//		CalculatePropertyTypeRatesWindow window = new CalculatePropertyTypeRatesWindow();
+//		window.createAndShowWindow();	
+//	}
 
 }
