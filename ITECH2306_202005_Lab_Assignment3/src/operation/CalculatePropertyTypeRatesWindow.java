@@ -351,6 +351,7 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setResizable(false);
 		this.setVisible(true);
+		this.toFront();
 	}
 	
 	// The main method is provided for standalone testing of the GUI, 
