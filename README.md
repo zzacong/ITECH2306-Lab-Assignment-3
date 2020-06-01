@@ -38,3 +38,6 @@ V1.7
 V1.8
 - Add percentage sign and dollar sign for display
 - Increase title label font size
+
+V1.9
+- Bring window to front after opening it
