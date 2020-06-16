@@ -18,7 +18,7 @@ import utility.Validator;
  * @author Zac
  *
  */
-public class SubmitButtonListener implements ActionListener{
+public class SubmitButtonListener implements ActionListener {
 	
 	private static final int RESIDENTIAL = 0,
 			 				 COMMERCIAL = 1,

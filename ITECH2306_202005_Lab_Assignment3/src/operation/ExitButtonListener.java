@@ -9,7 +9,7 @@ import javax.swing.*;
  * @author Zac
  *
  */
-public class ExitButtonListener implements ActionListener{
+public class ExitButtonListener implements ActionListener {
 
 	private JFrame target;
 	
