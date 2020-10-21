@@ -356,9 +356,9 @@ public class CalculatePropertyTypeRatesWindow extends JFrame {
 	
 	// The main method is provided for standalone testing of the GUI, 
 	// without having to run through CouncilSystem class from the console, it is now disabled
-//	public static void main(String[] args) {
-//		CalculatePropertyTypeRatesWindow window = new CalculatePropertyTypeRatesWindow();
-//		window.createAndShowWindow();	
-//	}
+	public static void main(String[] args) {
+		CalculatePropertyTypeRatesWindow window = new CalculatePropertyTypeRatesWindow();
+		window.createAndShowWindow();	
+	}
 
 }
