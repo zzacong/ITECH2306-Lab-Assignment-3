@@ -40,14 +40,12 @@ public class CalculatePropertyTypeRatesGUI extends FunctionalDialog {
 						// The window's DefaultCloseOperation is set to DISPOSE_ON_CLOSE, so it doesn't matter at the moment
 						// But I'll still leave it here
 						setStillRunning(false);
-						run = true;
 					}
 		
 					@Override
 					public void windowClosed(WindowEvent e) {
 						// Move back to MainMenu when window is Disposed
 						setStillRunning(false);
-						run = true;
 					}
 		
 					@Override
